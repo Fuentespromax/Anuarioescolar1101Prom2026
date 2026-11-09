@@ -1,0 +1,329 @@
+/* ==========================================================
+   1. COLORES INSTITUCIONALES — cambia aquí y cambia todo el libro
+   ========================================================== */
+:root {
+  --verde:      #0f4a2e;   /* verde oscuro: títulos, íconos, líneas */
+  --verde-mesa: #0a3b26;   /* fondo de la mesa */
+  --verde-cl:   #8cc790;   /* verde pincel (rótulos) */
+  --amarillo:   #f6d12b;
+  --rojo:       #d42a22;
+  --papel:      #f4f2eb;   /* blanco hueso de las hojas */
+  --blanco:     #ffffff;
+  --tinta:      #12382a;
+
+  --f-titulo: "Kaushan Script", "Brush Script MT", "Segoe Script", cursive;
+  --f-mano:   "Caveat", "Segoe Print", "Bradley Hand", cursive;
+  --f-texto:  "Montserrat", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* ==========================================================
+   2. MESA Y LIBRO
+   Todo el diseño de una hoja está en "unidades de plantilla":
+   la plantilla mide 1024 × 1536 y --t es 1 de esas unidades,
+   así la hoja se ve igual de grande o de pequeña.
+   ========================================================== */
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100svh;
+  font-family: var(--f-texto); color: var(--tinta);
+  background-color: var(--verde-mesa);
+  background-image:
+    repeating-linear-gradient(115deg, rgba(255,255,255,.028) 0 2px, transparent 2px 16px),
+    radial-gradient(ellipse at 50% 35%, #14633b 0%, var(--verde-mesa) 62%, #06281a 100%);
+  background-attachment: fixed;
+}
+.libro { width: 100%; max-width: 700px; margin: 0 auto; padding: .9rem .8rem 1.1rem; }
+.oculto { display: none !important; }
+.solo-lector { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.paginas {
+  --ancho: clamp(300px, min(100%, calc((100svh - 165px) * 2 / 3)), 640px);
+  position: relative; width: var(--ancho); aspect-ratio: 2 / 3; margin: 0 auto;
+  perspective: 2400px;
+}
+
+/* ==========================================================
+   3. HOJA (una página)
+   ========================================================== */
+.hoja {
+  --t: calc(100cqw / 1024);
+  --fs: 25;                             /* tamaño del texto en unidades de plantilla; script.js lo ajusta */
+  position: absolute; inset: 0; overflow: hidden;
+  container-type: size;
+  backface-visibility: hidden; transform-origin: left center;
+  background-color: var(--papel);
+  background-image:
+    radial-gradient(circle at 18% 12%, rgba(255,255,255,.7), transparent 46%),
+    radial-gradient(circle at 85% 88%, rgba(15,74,46,.045), transparent 50%);
+  border-radius: 3px 7px 7px 3px;
+  box-shadow:
+    inset 14px 0 18px -12px rgba(0,0,0,.28),
+    3px 0 0 #e9e6d9, 5px 0 0 #fbfaf5, 7px 0 0 #dcd8c6,
+    0 26px 44px rgba(0,0,0,.5);
+}
+.d, .cuerpo, .cabecera { pointer-events: none; }
+.d { position: absolute; }
+.d svg, .cab-deco { display: block; width: 100%; height: 100%; }
+.d-esquina { right: 0; top: 0; width: calc(176 * var(--t)); height: calc(125 * var(--t)); }
+.d-onda    { left: 0; bottom: 0; width: 100%; height: calc(130 * var(--t)); }
+.d-rasgado { left: 0; bottom: 0; width: calc(290 * var(--t)); height: calc(366 * var(--t)); }
+.cuerpo { position: absolute; inset: 0; }
+.cuerpo > *, .cabecera > * { pointer-events: auto; }
+.folio {
+  position: absolute; left: 0; right: 0; bottom: calc(26 * var(--t)); margin: 0; text-align: center;
+  font: 600 calc(24 * var(--t))/1 var(--f-texto); letter-spacing: .12em; color: var(--blanco);
+  text-shadow: 0 1px 2px rgba(0,0,0,.35);
+}
+
+/* ---------- Cabecera "Promoción 2026" (igual en todas las hojas) ---------- */
+.cabecera { position: absolute; left: 0; top: 0; width: 100%; height: calc(400 * var(--t)); }
+.cab-deco { position: absolute; inset: 0; }
+.institucion {
+  position: absolute; left: calc(80 * var(--t)); top: calc(34 * var(--t)); width: calc(520 * var(--t)); margin: 0;
+  display: flex; align-items: center; gap: calc(26 * var(--t));
+  font: 500 calc(16 * var(--t))/1 var(--f-texto); letter-spacing: .34em; text-transform: uppercase; color: #2a5a44;
+}
+.institucion::after { content: ""; flex: 1; height: 0; border-top: calc(1.6 * var(--t)) solid var(--verde); opacity: .7; }
+.titulo { position: absolute; left: calc(62 * var(--t)); top: calc(62 * var(--t)); margin: 0; width: calc(520 * var(--t)); color: var(--verde); font-family: var(--f-titulo); font-weight: 400; line-height: 1; }
+.titulo span { display: block; transform-origin: left bottom; transform: rotate(-6deg); -webkit-text-stroke: calc(2.4 * var(--t)) var(--verde); paint-order: stroke fill; }
+.titulo .t1 { font-size: calc(112 * var(--t)); }
+.titulo .t2 { font-size: calc(158 * var(--t)); margin: calc(-20 * var(--t)) 0 0 calc(50 * var(--t)); }
+.subtitulo {
+  position: absolute; left: calc(70 * var(--t)); top: calc(318 * var(--t)); width: calc(500 * var(--t)); margin: 0;
+  font: 500 calc(44 * var(--t))/1 var(--f-mano); color: var(--verde); transform: rotate(-7deg); transform-origin: left bottom; white-space: nowrap;
+}
+.escudo { position: absolute; left: calc(724 * var(--t)); top: calc(56 * var(--t)); width: calc(206 * var(--t)); height: auto; filter: drop-shadow(0 calc(5 * var(--t)) calc(6 * var(--t)) rgba(0,0,0,.2)); }
+
+/* ---------- Rótulos: círculo verde con ícono + pincelada de color ---------- */
+.rotulo { display: flex; align-items: center; margin: 0; height: calc(52 * var(--t)); font-weight: 600; }
+.ico {
+  flex: none; display: grid; place-items: center; width: calc(52 * var(--t)); height: calc(52 * var(--t));
+  border-radius: 50%; background: var(--verde); color: var(--blanco);
+}
+.ico svg { width: 54%; height: 54%; }
+.pincel {
+  margin-left: calc(-4 * var(--t)); padding: calc(7 * var(--t)) calc(34 * var(--t)) calc(7 * var(--t)) calc(24 * var(--t));
+  font-size: calc(19 * var(--t)); line-height: 1.25; letter-spacing: .22em; text-transform: uppercase; color: var(--verde); white-space: nowrap;
+  clip-path: polygon(1% 24%, 5% 8%, 38% 16%, 78% 4%, 94% 14%, 100% 32%, 96% 46%, 100% 62%, 93% 80%, 98% 94%, 60% 100%, 20% 93%, 3% 100%, 0 70%);
+}
+.pincel.amarillo { background: var(--amarillo); }
+.pincel.verde    { background: var(--verde-cl); }
+.pincel.rojo     { background: #f08d86; }
+
+/* ==========================================================
+   4. HOJA DE ESTUDIANTE (la plantilla)
+   ========================================================== */
+.marco {
+  position: absolute; left: calc(50 * var(--t)); top: calc(438 * var(--t)); width: calc(385 * var(--t)); aspect-ratio: 385 / 515; margin: 0;
+  background: #fbfaf6; transform: rotate(-1deg);
+  box-shadow: 0 calc(8 * var(--t)) calc(20 * var(--t)) rgba(0,0,0,.2), 0 0 0 calc(1 * var(--t)) rgba(0,0,0,.06);
+}
+.marco::after {                          /* línea verde del marco, corrida hacia abajo y a la derecha */
+  content: ""; position: absolute; z-index: -1; inset: calc(-10 * var(--t)) calc(-8 * var(--t)) calc(-6 * var(--t)) calc(-4 * var(--t));
+  border: calc(2.4 * var(--t)) solid var(--verde);
+}
+.franja {                                /* tira verde oscura que asoma a la izquierda */
+  position: absolute; z-index: -1; left: calc(-24 * var(--t)); top: calc(-4 * var(--t)); width: calc(70 * var(--t)); bottom: calc(-48 * var(--t));
+  background: var(--verde); clip-path: polygon(0 3%, 100% 0, 100% 100%, 0 99%, 4% 50%);
+}
+.foto { position: absolute; inset: calc(15 * var(--t)) calc(20 * var(--t)) calc(25 * var(--t)) calc(22 * var(--t)); overflow: hidden; background: #d9d9d4; }
+.foto img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.cinta { position: absolute; width: calc(100 * var(--t)); height: calc(40 * var(--t)); opacity: .92; clip-path: polygon(0 8%, 4% 0, 6% 100%, 10% 92%, 94% 100%, 97% 0, 100% 10%, 98% 100%, 0 92%); }
+.cinta-amarilla { left: calc(-34 * var(--t)); top: calc(-8 * var(--t)); background: var(--amarillo); transform: rotate(-38deg); }
+.cinta-roja     { right: calc(-36 * var(--t)); bottom: calc(10 * var(--t)); width: calc(92 * var(--t)); height: calc(38 * var(--t)); background: var(--rojo); transform: rotate(-40deg); }
+.cuadros { position: absolute; left: calc(32 * var(--t)); top: calc(1022 * var(--t)); width: calc(23 * var(--t)); display: grid; gap: calc(5 * var(--t)); }
+.cuadros i { display: block; height: calc(43 * var(--t)); }
+.cuadros i:nth-child(1) { background: var(--verde); }
+.cuadros i:nth-child(2) { background: var(--amarillo); }
+.cuadros i:nth-child(3) { background: var(--rojo); }
+.lema-mano {
+  position: absolute; left: calc(108 * var(--t)); top: calc(1040 * var(--t)); width: calc(236 * var(--t)); margin: 0;
+  font: 500 calc(40 * var(--t))/1.12 var(--f-mano); color: var(--verde); transform: rotate(-11deg); transform-origin: left top;
+}
+.garabatos { position: absolute; inset: 0; }
+.garabatos svg { width: 100%; height: 100%; }
+
+/* Columna de datos: se reparte el alto; si un texto es largo, su cuadro crece */
+.col { position: absolute; left: calc(471 * var(--t)); top: calc(385 * var(--t)); width: calc(500 * var(--t)); height: calc(1040 * var(--t)); display: flex; flex-direction: column; gap: calc(34 * var(--t)); }
+.campo { position: relative; display: flex; flex-direction: column; gap: calc(14 * var(--t)); }
+.campo-flex { flex: var(--g) 1 0; min-height: min-content; }
+.caja {
+  position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: .5em;
+  padding: calc(12 * var(--t)) calc(26 * var(--t));
+  border: calc(1.6 * var(--t)) solid rgba(15,74,46,.38); border-radius: calc(22 * var(--t)); background: rgba(255,255,255,.42);
+  font-size: calc(var(--fs) * var(--t)); line-height: 1.38; font-weight: 500; color: var(--tinta);
+}
+.caja p { margin: 0; }
+.caja p + p { margin-top: .5em; }
+.campo-recuerdo { margin-right: calc(22 * var(--t)); }
+.caja-frase { padding-inline: calc(58 * var(--t)); }
+.caja-frase::before, .caja-frase::after { position: absolute; font: 700 calc(54 * var(--t))/1 Georgia, serif; color: var(--verde); }
+.caja-frase::before { content: "\201C"; left: calc(16 * var(--t)); top: calc(10 * var(--t)); }
+.caja-frase::after  { content: "\201D"; right: calc(16 * var(--t)); bottom: calc(-6 * var(--t)); }
+.frase { font: 700 calc(var(--ff, 38) * var(--t))/1.08 var(--f-mano); color: var(--verde); text-align: center; }
+.lista { margin: 0; padding: 0; list-style: none; }
+.lista li { position: relative; padding-left: 1.25em; }
+.lista li + li { margin-top: .25em; }
+.lista li::before { content: ""; position: absolute; left: .15em; top: .5em; width: .5em; height: .5em; background: var(--amarillo); border: .12em solid var(--verde); transform: rotate(45deg); }
+.lista.dos { columns: 2; column-gap: 1.4em; }
+.lista.dos li { break-inside: avoid; }
+
+.nombre-texto {
+  margin: 0; padding: 0 calc(8 * var(--t)); min-height: calc(46 * var(--t)); display: flex; align-items: flex-end;
+  font: 400 calc(var(--fn, 36) * var(--t))/1.15 var(--f-titulo); color: var(--verde); white-space: nowrap; overflow: hidden;
+  border-bottom: calc(1.8 * var(--t)) solid var(--verde);
+}
+.campo-firma { margin-top: auto; }
+.firma-linea { height: calc(62 * var(--t)); margin: 0 calc(46 * var(--t)) 0 calc(38 * var(--t)); border-bottom: calc(1.6 * var(--t)) solid var(--verde); }
+.firma-linea img { display: block; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+
+/* Texto muy largo: se recorta con degradado y se abre completo en una ventana */
+.campo.recortado, .campo.recortado .caja { min-height: 0; }
+.campo.recortado .caja { min-height: calc(112 * var(--t)); padding-bottom: calc(30 * var(--t)); }
+.campo.recortado .caja { overflow: hidden; justify-content: flex-start; -webkit-mask-image: linear-gradient(#000 72%, transparent); mask-image: linear-gradient(#000 72%, transparent); }
+.mas {
+  position: absolute; right: calc(20 * var(--t)); bottom: calc(10 * var(--t)); z-index: 2;
+  padding: calc(6 * var(--t)) calc(16 * var(--t)); border: 0; border-radius: 99px; cursor: pointer;
+  background: var(--verde); color: var(--blanco); font: 600 calc(16 * var(--t))/1.2 var(--f-texto); letter-spacing: .04em;
+}
+.mas:hover { background: var(--rojo); }
+.mas[hidden] { display: none; }
+
+/* ==========================================================
+   5. PORTADA, ÍNDICE, MENSAJE Y CONTRAPORTADA
+   ========================================================== */
+.portada .marco { left: calc(78 * var(--t)); top: calc(428 * var(--t)); width: calc(868 * var(--t)); aspect-ratio: 868 / 668; transform: rotate(.8deg); }
+.portada .foto { inset: calc(22 * var(--t)); }
+.portada .franja { display: none; }
+.portada-pie { position: absolute; left: 0; right: 0; top: calc(1130 * var(--t)); text-align: center; }
+.portada-pie p { margin: 0; }
+.portada-colegio { font: 400 calc(66 * var(--t))/1.1 var(--f-titulo); color: var(--verde); }
+.portada-anuario { display: inline-block; margin-top: calc(18 * var(--t)); }
+.portada-grado { margin-top: calc(24 * var(--t)); font: 500 calc(40 * var(--t))/1 var(--f-mano); color: var(--verde); }
+
+.seccion { position: absolute; left: calc(92 * var(--t)); top: calc(420 * var(--t)); width: calc(840 * var(--t)); }
+.indice-lista { list-style: none; margin: calc(28 * var(--t)) 0 0; padding: 0 calc(6 * var(--t)) 0 0; columns: 2; column-gap: calc(44 * var(--t)); max-height: calc(880 * var(--t)); overflow-y: auto; }
+.indice-lista li { break-inside: avoid; }
+.indice-lista button {
+  display: flex; align-items: baseline; gap: calc(10 * var(--t)); width: 100%; padding: calc(6 * var(--t)) calc(4 * var(--t)); border: 0; background: none; cursor: pointer; text-align: left;
+  font: 500 calc(19 * var(--t))/1.2 var(--f-texto); color: var(--tinta); border-radius: calc(8 * var(--t));
+}
+.indice-lista button:hover { background: rgba(246,209,43,.4); }
+.indice-lista .num { flex: none; width: 2.1em; font-weight: 700; color: var(--rojo); }
+.indice-lista .nom { flex: 0 1 auto; min-width: 0; }
+.indice-lista .puntos { flex: 1; min-width: .6em; border-bottom: calc(2 * var(--t)) dotted rgba(15,74,46,.5); transform: translateY(-.25em); }
+.indice-lista .pag { flex: none; font-weight: 700; color: var(--verde); }
+
+.mensaje-titulo { margin: calc(26 * var(--t)) 0 calc(6 * var(--t)); font: 400 calc(70 * var(--t))/1.1 var(--f-titulo); color: var(--verde); }
+.mensaje-saludo { margin: calc(20 * var(--t)) 0 calc(14 * var(--t)); font: 700 calc(46 * var(--t))/1.1 var(--f-mano); color: var(--rojo); }
+.seccion .texto-mensaje { margin: 0 0 calc(22 * var(--t)); font-size: calc(28 * var(--t)); line-height: 1.6; font-weight: 500; }
+.mensaje-firma { margin: calc(30 * var(--t)) 0 0; text-align: right; font: 700 calc(46 * var(--t))/1 var(--f-mano); color: var(--verde); }
+
+.contra { background: var(--verde); background-image: radial-gradient(ellipse at 50% 42%, #167046 0%, transparent 68%); border-radius: 7px 3px 3px 7px; }
+.contra .cuerpo { display: grid; place-content: center; justify-items: center; text-align: center; gap: calc(26 * var(--t)); }
+.contra .escudo-g { width: calc(330 * var(--t)); height: auto; filter: drop-shadow(0 calc(10 * var(--t)) calc(14 * var(--t)) rgba(0,0,0,.35)); }
+.contra p { margin: 0; }
+.contra .c-esc { font: 500 calc(18 * var(--t))/1 var(--f-texto); letter-spacing: .34em; text-transform: uppercase; color: var(--blanco); }
+.contra .c-nom { font: 400 calc(84 * var(--t))/1.05 var(--f-titulo); color: var(--amarillo); }
+.contra .c-bar { display: flex; width: calc(240 * var(--t)); height: calc(10 * var(--t)); }
+.contra .c-bar i { flex: 1; } .contra .c-bar i:nth-child(1){background:var(--blanco)} .contra .c-bar i:nth-child(2){background:var(--amarillo)} .contra .c-bar i:nth-child(3){background:var(--rojo)}
+.contra .c-pie { font: 500 calc(46 * var(--t))/1 var(--f-mano); color: var(--blanco); }
+
+/* ==========================================================
+   6. BUSCADOR Y BOTONES
+   ========================================================== */
+.buscador {
+  width: var(--ancho, 100%); margin: 0 auto .8rem; max-width: 640px;
+  display: flex; align-items: center; gap: .6rem; padding: .5rem 1rem;
+  background: var(--papel); color: var(--verde); border-radius: 99px; border: 2px solid transparent;
+  box-shadow: 0 3px 0 rgba(0,0,0,.25);
+}
+.buscador:focus-within { border-color: var(--amarillo); }
+.buscador.sin-resultado { border-color: var(--rojo); }
+.buscador input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 500 .95rem var(--f-texto); color: var(--tinta); }
+.buscador input::placeholder { color: #5f7d6d; }
+#contador { font-size: .75rem; font-weight: 600; color: #5f7d6d; white-space: nowrap; }
+.paginador { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1.2rem auto 0; }
+.paginador button {
+  min-width: 7.5rem; padding: .65rem 1.2rem; border: 0; border-radius: 99px; cursor: pointer;
+  background: var(--amarillo); color: var(--verde); font: 700 .88rem var(--f-texto); letter-spacing: .06em;
+  box-shadow: 0 3px 0 #a88a00; transition: transform .12s, box-shadow .12s;
+}
+.paginador button:hover:not(:disabled) { transform: translateY(1px); box-shadow: 0 2px 0 #a88a00; }
+.paginador button:disabled { opacity: .35; cursor: default; }
+#indicador { min-width: 8rem; text-align: center; font: 600 .85rem var(--f-texto); letter-spacing: .12em; color: var(--papel); }
+button:focus-visible, input:focus-visible, .indice-lista button:focus-visible { outline: 3px solid var(--amarillo); outline-offset: 2px; }
+.paginador button:focus-visible { outline-color: var(--blanco); }
+
+/* ==========================================================
+   7. PASAR HOJA: la página gira sobre su borde izquierdo
+   ========================================================== */
+.hoja.gira-sale  { z-index: 3; animation: sale .75s cubic-bezier(.55, .05, .75, .25) forwards; }
+.hoja.gira-entra { z-index: 3; animation: entra .75s cubic-bezier(.2, .75, .3, 1) both; }
+@keyframes sale  { to   { transform: rotateY(-102deg); box-shadow: 0 30px 60px rgba(0,0,0,.6); } }
+@keyframes entra { from { transform: rotateY(-102deg); } to { transform: rotateY(0); } }
+.hoja.fade-sale  { animation: fsale .16s forwards; }
+.hoja.fade-entra { animation: fentra .24s both; }
+@keyframes fsale  { to { opacity: 0; } }
+@keyframes fentra { from { opacity: 0; } to { opacity: 1; } }
+
+/* ==========================================================
+   8. VENTANA "LEER COMPLETO"
+   ========================================================== */
+dialog { width: min(640px, calc(100% - 1.6rem)); max-height: 86svh; padding: 1.6rem 1.6rem 1.4rem; border: 0; border-radius: 18px; background: var(--papel); color: var(--tinta); box-shadow: 0 30px 70px rgba(0,0,0,.6); overflow: auto; border-top: 10px solid var(--verde); }
+dialog::backdrop { background: rgba(5, 32, 20, .72); }
+dialog h2 { margin: .1rem 0 1rem; font: 400 1.9rem/1.15 var(--f-titulo); color: var(--verde); }
+.lectura-sub { margin: 0; display: inline-block; padding: .25rem .9rem; font: 600 .72rem var(--f-texto); letter-spacing: .24em; text-transform: uppercase; background: var(--amarillo); color: var(--verde); }
+#lectura-texto p { margin: 0 0 .9rem; font-size: .98rem; line-height: 1.65; }
+.lectura-cierre { position: absolute; top: .9rem; right: .9rem; margin: 0; }
+.lectura-cierre button { width: 2.2rem; height: 2.2rem; border: 0; border-radius: 50%; background: var(--verde); color: var(--blanco); font-size: 1rem; cursor: pointer; }
+.lectura-cierre button:hover { background: var(--rojo); }
+
+/* ==========================================================
+   9. CELULAR: la hoja deja de ser fija y el texto se lee en tamaño normal
+   ========================================================== */
+@media (max-width: 700px) {
+  .libro { padding: .6rem .5rem 4.6rem; }
+  .paginas { width: 100%; aspect-ratio: auto; perspective: none; }
+  .hoja { position: relative; inset: auto; container-type: inline-size; }
+  .cabecera { position: relative; }
+  .cuerpo { position: relative; inset: auto; padding: calc(10 * var(--t)) 6% calc(190 * var(--t)); }
+  .garabatos, .cuadros, .d-rasgado, .franja, .marco::after { display: none; }
+  .persona .marco, .portada .marco { position: relative; left: auto; top: auto; width: min(76%, 320px); margin: 0 auto 1.4rem; }
+  .portada .marco { width: 100%; }
+  .lema-mano { position: static; width: auto; margin: 0 0 1.2rem; text-align: center; font-size: 1.5rem; transform: none; }
+  .col { position: static; width: auto; height: auto; gap: 1.1rem; }
+  .campo-flex { flex: none; min-height: 0; }
+  .campo { gap: .5rem; }
+  .campo-recuerdo { margin-right: 0; }
+  .rotulo { height: 2.1rem; } .ico { width: 2.1rem; height: 2.1rem; }
+  .pincel { font-size: .7rem; padding: .4rem 1.4rem .4rem 1rem; }
+  .caja { font-size: .92rem; padding: .7rem 1rem; border-radius: 16px; }
+  .caja-frase { padding-inline: 2.4rem; }
+  .caja-frase::before, .caja-frase::after { font-size: 2.2rem; }
+  .frase { font-size: 1.55rem; }
+  .nombre-texto { font-size: 1.7rem; min-height: 2.4rem; white-space: normal; padding: 0 .3rem; }
+  .firma-linea { height: 4.2rem; margin-inline: .8rem 1rem; }
+  .campo-firma { margin-top: .4rem; }
+  .mas { display: none; }
+  .portada-pie { position: static; margin-top: 1.6rem; }
+  .portada-colegio { font-size: 2.2rem; }
+  .portada-grado { font-size: 1.5rem; }
+  .seccion { position: static; width: auto; }
+  .indice-lista { columns: 1; max-height: none; }
+  .indice-lista button { font-size: .9rem; padding: .5rem .3rem; }
+  .seccion .texto-mensaje { font-size: .98rem; }
+  .mensaje-titulo { font-size: 2.2rem; } .mensaje-saludo { font-size: 1.6rem; } .mensaje-firma { font-size: 1.8rem; }
+  .contra { min-height: 100svh; }
+  .contra .cuerpo { min-height: calc(100svh - 360 * var(--t)); padding-top: calc(200 * var(--t)); }
+  .folio { bottom: calc(30 * var(--t)); font-size: .85rem; }
+  .paginador { position: fixed; left: 0; right: 0; bottom: 0; margin: 0; padding: .55rem .6rem; gap: .5rem; background: rgba(6, 40, 26, .94); z-index: 20; }
+  .paginador button { min-width: 6.2rem; padding: .6rem .9rem; }
+  #indicador { min-width: 0; flex: 1; font-size: .72rem; letter-spacing: .06em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hoja.gira-sale, .hoja.gira-entra, .hoja.fade-sale, .hoja.fade-entra { animation: none; }
+  .paginador button { transition: none; }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anuario 2026 · PROM 1101 · I.E. Eugenio Ferro Falla</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Kaushan+Script&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Dibujos reutilizables (garabatos, esquinas, hoja rasgada). script.js los llama con <use>. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <!-- Garabatos sueltos dibujados a mano. Coordenadas = la plantilla (1024 × 1536) -->
+      <g id="g-garabatos" fill="none" stroke="#0f4a2e" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M416 447C396 431 397 411 409 410c6 0 9 6 9 8 2-7 10-10 14-4 6 10-1 22-16 33z"/>
+        <path d="M962 763l15 11M970 752l8 14M960 786l25-4"/>
+        <path d="M30 969l28-15M44 936l9 22M56 976l5 19"/>
+        <path d="M349 992l5 12 13 1-10 8 4 13-12-8-12 8 4-13-10-8 13-1z"/>
+        <path d="M968 1412c-18-22-18-44-6-46 6 0 8 6 8 10 2-8 12-16 14-4 2 13-6 28-16 40z"/>
+      </g>
+      <!-- Hoja rasgada verde de abajo a la izquierda, con hojas dibujadas. Zona: x 0-290, y 1170-1536 -->
+      <g id="g-rasgado">
+        <path fill="#e4e1d3" d="M0 1186l24 17 14 20 28 24 18 25 12 28 17 20 14 28 29 14 22 28 25 20 22 28 30 14 20 12 10 36H0z"/>
+        <path fill="url(#verde-rasgado)" d="M0 1178l22 17 13 19 27 24 18 25 12 28 16 20 14 28 28 14 22 28 24 20 22 28 28 14 14 12 12 40H0z"/>
+        <g fill="none" stroke="rgba(255,255,255,.82)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 1430c26-34 50-76 82-118"/>
+          <path d="M28 1396c-16-26 0-52 22-62 8 28-2 52-22 62z"/>
+          <path d="M52 1364c-8-24 8-46 28-52 4 26-6 44-28 52z"/>
+          <path d="M44 1412c22-2 40-18 46-38-24-2-42 12-46 38z"/>
+          <path d="M72 1380c22 0 38-14 42-34-22-2-38 10-42 34z"/>
+          <path d="M20 1440c14-18 34-28 56-30-6 20-24 34-56 30z"/>
+        </g>
+      </g>
+      <linearGradient id="verde-rasgado" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#14663b"/><stop offset="1" stop-color="#0a3d25"/>
+      </linearGradient>
+      <linearGradient id="verde-onda" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#0a3d25"/><stop offset=".6" stop-color="#0f5a34"/><stop offset="1" stop-color="#0a3d25"/>
+      </linearGradient>
+      <!-- Onda de abajo (verde, amarilla y roja). Zona: y 1406-1536 -->
+      <g id="g-onda">
+        <path fill="#f6d12b" d="M0 1418C260 1412 540 1470 770 1508l-62 4C470 1490 230 1450 0 1454z"/>
+        <path fill="url(#verde-onda)" d="M0 1452C260 1442 580 1508 1024 1430v106H0z"/>
+        <path fill="#d42a22" d="M1024 1438C940 1474 860 1504 742 1536h82c96-26 156-52 200-76z"/>
+      </g>
+    </defs>
+  </svg>
+
+  <h1 class="solo-lector">Anuario 2026 · PROM 1101 · I.E. Eugenio Ferro Falla</h1>
+
+  <main class="libro">
+    <!-- Buscador: escribe un nombre y el libro abre esa página -->
+    <div class="buscador">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="search" id="buscar" placeholder="Buscar por nombre" aria-label="Buscar estudiante por nombre" autocomplete="off">
+      <span id="contador"></span>
+    </div>
+
+    <!-- Aquí script.js crea las páginas a partir de datos.js -->
+    <div class="paginas" id="paginas"></div>
+
+    <nav class="paginador" aria-label="Pasar páginas">
+      <button type="button" id="btn-anterior">Anterior</button>
+      <span id="indicador" aria-live="polite"></span>
+      <button type="button" id="btn-siguiente">Siguiente</button>
+    </nav>
+  </main>
+
+  <!-- Ventana para leer un texto largo completo -->
+  <dialog id="lectura" aria-labelledby="lectura-nombre">
+    <form method="dialog" class="lectura-cierre"><button aria-label="Cerrar">✕</button></form>
+    <p class="lectura-sub" id="lectura-sub"></p>
+    <h2 id="lectura-nombre"></h2>
+    <div id="lectura-texto"></div>
+  </dialog>
+
+  <script src="datos.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
